@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tek’Et Grill | L'Excellence du Grill Turc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ottoman-red: #8B0000;
+            --bright-red: #B22222;
+            --gold-leaf: #C5A059;
+            --pure-white: #FFFFFF;
+            --deep-black: #0A0A0A;
+            --glass-dark: rgba(10, 10, 10, 0.85);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--deep-black);
+            color: var(--pure-white);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-display { font-family: 'Playfair Display', serif; }
+
+        .oriental-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0l20 40-20 40-20-40z' fill='%238B0000' fill-opacity='0.02'/%3E%3C/svg%3E");
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, var(--ottoman-red), #5a0000);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-premium::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.6s;
+        }
+
+        .btn-premium:hover::after { left: 120%; }
+
+        .btn-premium:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(139, 0, 0, 0.4);
+            border-color: var(--pure-white);
+        }
+
+        .card-vedette {
+            background: linear-gradient(to bottom, #151515, #0A0A0A);
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .card-vedette:hover {
+            border-color: var(--ottoman-red);
+            transform: scale(1.02);
+        }
+
+        .tab-active {
+            color: var(--ottoman-red) !important;
+            border-bottom: 2px solid var(--ottoman-red);
+            opacity: 1 !important;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--deep-black); }
+        ::-webkit-scrollbar-thumb { background: var(--ottoman-red); border-radius: 10px; }
+
+        .glass-nav {
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .btn-delivery {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-delivery:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-delivery:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-4px);
+            border-color: var(--ottoman-red);
+        }
+
+        .btn-delivery::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, var(--ottoman-red), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+            filter: blur(20px);
+        }
+
+        .btn-delivery:hover::before {
+            opacity: 0.2;
+        }
+
+        .brand-accent-uber { border-left: 4px solid #06C167; }
+        .brand-accent-deliveroo { border-left: 4px solid #00CCBC; }
+
+        .fab-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab-button {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--ottoman-red), #5a0000);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(139, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+        }
+
+        .fab-button:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 40px rgba(139, 0, 0, 0.7);
+            border-color: var(--pure-white);
+        }
+
+        .fab-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--ottoman-red);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.6;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .fab-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="oriental-bg">
+
+    <div class="fab-container md:block hidden">
+        <div class="fab-pulse"></div>
+        <button onclick="openOrderModal()" class="fab-button" aria-label="Commander">
+            <img src="https://placehold.co/100x100/8B0000/ffffff?text=T" alt="Logo" class="fab-logo">
+        </button>
+    </div>
+
+    <div id="orderModal" class="modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="modal-content bg-[#0A0A0A] border border-white/10 w-full max-w-lg rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 relative overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.9)]">
+            <!-- Decorative Ottoman Pattern Background -->
+            <div class="absolute inset-0 opacity-[0.05] pointer-events-none oriental-bg scale-150"></div>
+            
+            <button onclick="closeOrderModal()" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors z-30">
+                <i data-lucide="x" class="w-6 h-6 md:w-8 md:h-8"></i>
+            </button>
+
+            <div class="relative z-20 text-center mb-10">
+                <span class="text-red-700 text-[10px] font-bold uppercase tracking-[0.6em] mb-4 block">Service à Domicile</span>
+                <h3 class="text-3xl md:text-5xl font-display mb-4">L'Héritage Ottoman <br><span class="italic text-red-700">chez vous</span></h3>
+                <div class="w-12 h-0.5 bg-red-900/50 mx-auto mb-6"></div>
+                <p class="text-gray-400 text-xs md:text-sm font-light leading-relaxed max-w-xs mx-auto">Veuillez sélectionner votre plateforme de livraison favorite pour commander.</p>
+            </div>
+
+            <div class="relative z-20 space-y-4">
+                <!-- Uber Eats Button -->
+                <a href="https://www.ubereats.com" target="_blank" class="btn-delivery brand-accent-uber w-full flex items-center gap-4 md:gap-6 p-5 md:p-6 rounded-2xl group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#06C167]/10 rounded-xl border border-[#06C167]/30">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 md:w-6 md:h-6 text-[#06C167]"></i>
+                    </div>
+                    <div class="text-left">
+                        <span class="block text-[9px] uppercase tracking-widest text-gray-500 font-bold mb-0.5">Livraison via</span>
+                        <span class="block text-lg md:text-xl font-bold text-white group-hover:text-[#06C167] transition-colors">Uber <span class="text-[#06C167]">Eats</span></span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 ml-auto text-gray-600 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                </a>
+
+                <!-- Deliveroo Button -->
+                <a href="https://www.deliveroo.fr" target="_blank" class="btn-delivery brand-accent-deliveroo w-full flex items-center gap-4 md:gap-6 p-5 md:p-6 rounded-2xl group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#00CCBC]/10 rounded-xl border border-[#00CCBC]/30">
+                        <i data-lucide="bike" class="w-5 h-5 md:w-6 md:h-6 text-[#00CCBC]"></i>
+                    </div>
+                    <div class="text-left">
+                        <span class="block text-[9px] uppercase tracking-widest text-gray-500 font-bold mb-0.5">Livraison via</span>
+                        <span class="block text-lg md:text-xl font-bold tracking-tight text-white group-hover:text-[#00CCBC] transition-colors">Deliveroo</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 ml-auto text-gray-600 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                </a>
+            </div>
+
+            <div class="mt-12 text-center">
+                <p class="text-[9px] text-gray-600 uppercase tracking-[0.4em]">Ouvert de 11h30 à 23h00 • 7j/7</p>
+            </div>
+        </div>
+    </div>
+
+    <nav id="navbar" class="fixed top-0 w-full z-50 px-6 py-4 transition-all duration-500">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4 group cursor-pointer">
+                <div class="w-12 h-12 rounded-full overflow-hidden border border-white/10 group-hover:border-red-700 transition-all duration-500 shadow-2xl">
+                    <img src="https://placehold.co/100x100/8B0000/ffffff?text=TEK'ET" alt="Logo Tek'Et" class="w-full h-full object-cover">
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold tracking-tighter leading-none">
+                        TEK’ET <span class="text-red-700">GRILL</span>
+                    </span>
+                    <span class="text-[9px] uppercase tracking-[0.4em] text-gray-400">Excellence Traditionnelle</span>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex items-center gap-8">
+                <a href="#hero" class="text-[10px] uppercase tracking-widest font-semibold hover:text-red-600 transition-colors">Accueil</a>
+                <a href="#vedettes" class="text-[10px] uppercase tracking-widest font-semibold hover:text-red-600 transition-colors">Spécialités</a>
+                <a href="#menu" class="text-[10px] uppercase tracking-widest font-semibold hover:text-red-600 transition-colors">La Carte</a>
+                <a href="#reservation" class="text-[10px] uppercase tracking-widest font-semibold hover:text-red-600 transition-colors">Réservation</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="tel:0973556872" class="hidden md:flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="phone" class="w-3 h-3"></i> 09 73 55 68 72
+                </a>
+                <button onclick="openOrderModal()" class="btn-premium px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                    Commander
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop" class="w-full h-full object-cover brightness-[0.3] scale-105" alt="Grillade">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-6 max-w-4xl">
+            <span class="inline-block mb-4 text-red-600 uppercase tracking-[0.8em] text-[10px] font-bold opacity-0 hero-fade">Depuis Drancy, l'Anatolie</span>
+            <h1 class="text-6xl md:text-9xl font-display mb-8 leading-[0.85] opacity-0 hero-fade">
+                L'Art du <span class="italic text-red-700">Vrai Grill</span>
+            </h1>
+            <p class="text-gray-300 text-lg mb-10 max-w-xl mx-auto font-light opacity-0 hero-fade">
+                Découvrez l'authenticité d'un kebab 100% fait maison et des grillades au feu de bois.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center opacity-0 hero-fade">
+                <button onclick="document.getElementById('menu').scrollIntoView()" class="btn-premium px-10 py-5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em]">
+                    Voir la carte complète
+                </button>
+                <button onclick="document.getElementById('reservation').scrollIntoView()" class="border border-white/20 px-10 py-5 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white/5 transition-all backdrop-blur-sm">
+                    Réserver une table
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="vedettes" class="py-32 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-20 reveal">
+            <h2 class="text-red-700 text-[10px] font-bold uppercase tracking-[0.5em] mb-4">Articles en vedette</h2>
+            <h3 class="text-4xl md:text-7xl font-display">Les Plus Aimés</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="card-vedette p-10 rounded-3xl relative reveal overflow-hidden group">
+                <div class="absolute top-6 right-6 bg-red-700/20 text-red-500 text-[10px] px-4 py-1.5 rounded-full font-bold uppercase tracking-tighter">N°1</div>
+                <h4 class="text-2xl font-display mb-2 mt-4">Sandwich Kebab Veau</h4>
+                <div class="text-red-600 font-bold mb-4 text-xl">12,90€</div>
+                <div class="flex items-center gap-2 mb-8">
+                    <div class="flex text-red-600"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star-half" class="w-3 h-3 fill-current"></i></div>
+                    <span class="text-gray-500 text-[11px] font-medium tracking-widest uppercase">86% (297 avis)</span>
+                </div>
+                <button onclick="document.getElementById('menu').scrollIntoView()" class="w-full py-4 border border-red-900/50 rounded-xl text-[10px] uppercase font-bold tracking-widest hover:bg-red-900/20 transition-all">Consulter la carte</button>
+            </div>
+
+            <div class="card-vedette p-10 rounded-3xl relative reveal border-red-700/50 shadow-2xl scale-105 z-10 bg-gradient-to-b from-red-950/20 to-black">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-red-700 text-white px-8 py-2.5 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-xl">N°2 SIGNATURE</div>
+                <h4 class="text-3xl font-display mb-2 mt-8">Tek'Et Signature</h4>
+                <div class="text-red-500 font-bold mb-4 text-2xl">15,90€</div>
+                <p class="text-gray-300 text-sm mb-10 leading-relaxed font-light">Sandwich au four : Veau maison, bacon halal, pastrami turc, mozzarella et cheddar fondant.</p>
+                <button onclick="openOrderModal()" class="w-full py-5 btn-premium rounded-xl text-[11px] uppercase font-bold tracking-widest">Goûter l'exception</button>
+            </div>
+
+            <div class="card-vedette p-10 rounded-3xl relative reveal">
+                <div class="absolute top-6 right-6 bg-red-700/20 text-red-500 text-[10px] px-4 py-1.5 rounded-full font-bold uppercase tracking-tighter">N°3</div>
+                <h4 class="text-2xl font-display mb-2 mt-4">Grillade Mixte</h4>
+                <div class="text-red-600 font-bold mb-4 text-xl">24,90€</div>
+                <div class="flex items-center gap-2 mb-8">
+                    <div class="flex text-red-600"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star-half" class="w-3 h-3 fill-current"></i></div>
+                    <span class="text-gray-500 text-[11px] font-medium tracking-widest uppercase">83% (271 avis)</span>
+                </div>
+                <button onclick="document.getElementById('menu').scrollIntoView()" class="w-full py-4 border border-red-900/50 rounded-xl text-[10px] uppercase font-bold tracking-widest hover:bg-red-900/20 transition-all">Consulter la carte</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="py-32 px-6 bg-white/[0.01] border-y border-white/5">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-16 gap-8 reveal">
+                <div class="text-center md:text-left">
+                    <h2 class="text-red-700 text-[10px] font-bold uppercase tracking-[0.5em] mb-4">La Carte complète</h2>
+                    <h3 class="text-4xl md:text-7xl font-display">Menu & Délices</h3>
+                </div>
+            </div>
+            
+            <div class="flex overflow-x-auto gap-8 no-scrollbar pb-8 mb-12 border-b border-white/5 reveal">
+                <button onclick="filterMenu('sandwichs')" class="menu-tab tab-active whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Sandwichs</button>
+                <button onclick="filterMenu('entrees')" class="menu-tab whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Entrées</button>
+                <button onclick="filterMenu('assiettes')" class="menu-tab whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Assiettes Grill</button>
+                <button onclick="filterMenu('salades')" class="menu-tab whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Salades</button>
+                <button onclick="filterMenu('pides')" class="menu-tab whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Pides (Pitas)</button>
+                <button onclick="filterMenu('extras')" class="menu-tab whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Extras</button>
+                <button onclick="filterMenu('desserts')" class="menu-tab whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Desserts</button>
+                <button onclick="filterMenu('boissons')" class="menu-tab whitespace-nowrap text-[11px] uppercase tracking-[0.2em] font-bold opacity-40 hover:opacity-100 transition-all">Boissons</button>
+            </div>
+
+            <div id="menu-container" class="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-6">
+                <!-- Data injected via JavaScript -->
+            </div>
+            
+            <div class="mt-20 text-center reveal opacity-60">
+                <p class="text-[10px] uppercase tracking-widest mb-4">Moyens de paiement acceptés</p>
+                <div class="flex flex-wrap justify-center gap-6 text-[11px] font-medium">
+                    <span>Swile</span>
+                    <span class="text-red-700">•</span>
+                    <span>Ticket Restaurant®</span>
+                    <span class="text-red-700">•</span>
+                    <span>Bimpli</span>
+                    <span class="text-red-700">•</span>
+                    <span>Pluxee</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reservation" class="py-32 px-6">
+        <div class="max-w-4xl mx-auto bg-gradient-to-br from-red-950/40 via-black to-black p-16 rounded-[4rem] border border-red-900/20 shadow-2xl reveal relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-red-900/10 blur-[100px] rounded-full"></div>
+            <div class="relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-6xl font-display mb-6">Réserver une table</h2>
+                    <p class="text-gray-400 font-light max-w-md mx-auto">Vivez l'expérience Tek'Et dans une ambiance chaleureuse et raffinée au cœur de Drancy.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase tracking-widest font-bold text-gray-500 ml-2">Nom complet</label>
+                        <input type="text" placeholder="Ex: Jean Dupont" class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm focus:border-red-600 outline-none transition-all placeholder:text-gray-700">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase tracking-widest font-bold text-gray-500 ml-2">Téléphone</label>
+                        <input type="tel" placeholder="06 .. .. .. .." class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm focus:border-red-600 outline-none transition-all placeholder:text-gray-700">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase tracking-widest font-bold text-gray-500 ml-2">Date souhaitée</label>
+                        <input type="date" class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm focus:border-red-600 outline-none transition-all text-gray-400">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase tracking-widest font-bold text-gray-500 ml-2">Nombre d'hôtes</label>
+                        <select class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-sm focus:border-red-600 outline-none transition-all text-gray-400 appearance-none">
+                            <option class="bg-black">2 Personnes</option>
+                            <option class="bg-black">4 Personnes</option>
+                            <option class="bg-black">6 Personnes</option>
+                            <option class="bg-black">Plus de 6</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-premium w-full mt-12 py-6 rounded-2xl font-bold uppercase tracking-[0.3em] text-[11px] shadow-2xl">
+                    Confirmer la réservation
+                </button>
+                <p class="text-center mt-6 text-[10px] text-gray-600 uppercase tracking-widest">Confirmation immédiate par SMS</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#050505] border-t border-white/5 pt-24 pb-12 px-6 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 relative z-10">
+            
+            <!-- Colonne 1: Identité -->
+            <div class="flex flex-col gap-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full border border-red-700/50 p-1 bg-white/5">
+                        <img src="image_1fefba.jpg.png" alt="Logo" class="w-full h-full object-contain rounded-full">
+                    </div>
+                    <span class="text-2xl font-bold tracking-tighter uppercase italic">TEK'ET <span class="text-red-700">GRILL</span></span>
+                </div>
+                <p class="text-gray-500 text-sm leading-relaxed font-light">
+                    L'excellence de la gastronomie turque à Drancy. Des grillades au feu de bois, un pain maison pétri chaque jour et un héritage culinaire transmis avec passion.
+                </p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-red-700 hover:border-red-700 transition-all duration-300">
+                        <i data-lucide="instagram" class="w-4 h-4 text-white"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-red-700 hover:border-red-700 transition-all duration-300">
+                        <i data-lucide="facebook" class="w-4 h-4 text-white"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-red-700 hover:border-red-700 transition-all duration-300">
+                        <i data-lucide="twitter" class="w-4 h-4 text-white"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Colonne 2: Contact & Accès -->
+            <div class="flex flex-col gap-6">
+                <h4 class="text-red-700 font-bold uppercase text-[10px] tracking-[0.4em] mb-2">Localisation</h4>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-red-700 mt-1"></i>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            186 Avenue Jean Jaurès<br>
+                            93700 Drancy, France
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <i data-lucide="phone" class="w-5 h-5 text-red-700"></i>
+                        <p class="text-gray-300 text-sm font-medium">09 73 55 68 72</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <i data-lucide="mail" class="w-5 h-5 text-red-700"></i>
+                        <p class="text-gray-300 text-sm">contact@teketgrill.fr</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne 3: Horaires -->
+            <div class="flex flex-col gap-6">
+                <h4 class="text-red-700 font-bold uppercase text-[10px] tracking-[0.4em] mb-2">Horaires d'Ouverture</h4>
+                <ul class="space-y-3">
+                    <li class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <span class="text-gray-500 text-[11px] uppercase tracking-wider font-medium">Lundi - Dimanche</span>
+                        <span class="text-white text-[11px] font-bold">11:30 – 23:30</span>
+                    </li>
+                    <li class="pt-2 italic text-gray-600 text-[10px]">
+                        * Service continu 7j/7 sans interruption.
+                    </li>
+                    <li id="status-container" class="mt-4 flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg transition-all duration-500">
+                        <div id="status-dot" class="w-2 h-2 rounded-full bg-gray-500"></div>
+                        <span id="status-text" class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Vérification...</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Colonne 4: Commandes & Apps -->
+            <div class="flex flex-col gap-6">
+                <h4 class="text-red-700 font-bold uppercase text-[10px] tracking-[0.4em] mb-2">Livraison à domicile</h4>
+                <div class="flex flex-col gap-3">
+                    <a href="#" class="group flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl hover:border-[#06C167]/50 hover:bg-[#06C167]/5 transition-all duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <svg viewBox="0 0 24 24" class="w-6 h-6 fill-[#06C167]"><path d="M12.001 2c-5.522 0-9.999 4.477-9.999 10 0 5.522 4.477 10 9.999 10 5.522 0 10-4.478 10-10 0-5.523-4.478-10-10-10zm4.566 12.639h-1.638l.68-4.481h-3.415l-.68 4.481h-1.638l.68-4.481h-2.138l.215-1.413h2.138l.385-2.544h1.638l-.385 2.544h3.415l.385-2.544h1.638l-.385 2.544h2.138l-.215 1.413h-2.138l-.681 4.481z"/></svg>
+                            </div>
+                            <span class="text-white text-xs font-bold font-['Inter']">Uber Eats</span>
+                        </div>
+                        <i data-lucide="external-link" class="w-3 h-3 text-gray-600 group-hover:text-[#06C167]"></i>
+                    </a>
+                    <a href="#" class="group flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl hover:border-[#00CCBC]/50 hover:bg-[#00CCBC]/5 transition-all duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <svg viewBox="0 0 24 24" class="w-6 h-6 fill-[#00CCBC]"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.666 16.326c-.326.852-1.077 1.454-2.007 1.624-1.127.206-2.22-.387-2.614-1.422l-1.045-2.736-4.225-.004 1.137 2.973c.394 1.035.118 2.215-.71 2.97-.828.755-2.036.914-3.023.398s-1.488-1.574-1.254-2.646c.074-.34.215-.658.413-.934l3.195-8.361c.427-1.118 1.547-1.802 2.723-1.664s2.052 1.053 2.135 2.235l.006.183 1.041 2.723 3.197.004c.15-.001.3-.01.448-.027 1.144-.131 2.14.544 2.457 1.644.318 1.099-.187 2.25-1.242 2.834-.344.19-.724.314-1.117.366z"/></svg>
+                            </div>
+                            <span class="text-white text-xs font-bold font-['Inter']">Deliveroo</span>
+                        </div>
+                        <i data-lucide="external-link" class="w-3 h-3 text-gray-600 group-hover:text-[#00CCBC]"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mentions Légales -->
+        <div class="max-w-7xl mx-auto mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-[9px] text-gray-700 uppercase tracking-[0.5em]">© 2024 TEK’ET GRILL — L'Excellence du Fait Maison</p>
+            <div class="flex gap-8">
+                <a href="#" class="text-[9px] text-gray-700 uppercase tracking-widest hover:text-red-700 transition-colors">Mentions Légales</a>
+                <a href="#" class="text-[9px] text-gray-700 uppercase tracking-widest hover:text-red-700 transition-colors">Politique de Confidentialité</a>
+                <a href="#" class="text-[9px] text-gray-700 uppercase tracking-widest hover:text-red-700 transition-colors">Cookies</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const menuData = {
+            sandwichs: [
+                { n: "Kebab Veau Maison", p: "12,90€", d: "Kebab de veau maison, frites maison, sauces et crudités au choix.", r: "86% (297)" },
+                { n: "Berlinois Teket", p: "13,90€", d: "Sauce blanche maison, feta, pain rond ou galette, légumes frais, frites maison.", r: "83% (133)" },
+                { n: "Sandwich Luxe Teket", p: "14,90€", d: "Veau maison, légumes grillés (poivrons, aubergines), grenade, feta, frites maison.", r: "93% (32)" },
+                { n: "Savoyard Kebab", p: "13,90€", d: "Raclette fondue, sauce BBQ, oignons caramélisés, lardons halal, frites maison.", r: "86% (50)" },
+                { n: "TEK'ET SIGNATURE", p: "15,90€", d: "Cuisson au four : Veau maison, bacon halal, pastrami, mozzarella, cheddar.", s: true },
+                { n: "Berlinois Galette Maison", p: "13,90€", d: "Galette maison, sauce maison, légumes frais, grenade, feta, frites maison.", r: "100% (8)" },
+                { n: "Sandwich El Mexicain", p: "13,90€", d: "Recette spéciale Mexique, sauce salsa, maïs, cheddar, poivrons, frites maison.", r: "83% (6)" },
+                { n: "Sandwich Köfte Maison", p: "12,90€", d: "Boulettes maison grillées, sauces et crudités au choix, frites maison.", r: "100% (4)" },
+                { n: "Sandwich Brochette Agneau", p: "13,90€", d: "Gigot d'agneau grillé au feu de bois, frites maison.", r: "80% (41)" },
+                { n: "Sandwich Chicken Curry", p: "12,90€", d: "Poulet mariné au curry, frites maison.", r: "92% (25)" },
+                { n: "L'Américain Kebab", p: "13,90€", d: "Pain rond, bacon halal, cheddar, cornichons, sauce BBQ, oignons frits.", r: "83% (12)" },
+                { n: "Sandwich Vegan", p: "9,90€", d: "Légumes grillés, feta, maïs, crudités fraîches, frites maison." },
+                { n: "Tacos", p: "12,90€", d: "Viande au choix, frites maison, sauce fromagère.", r: "86% (23)" },
+                { n: "Menu Enfant", p: "9,90€", d: "Sandwich au choix, frites, Caprisun et Kinder Surprise." }
+            ],
+            entrees: [
+                { n: "Icli Köfte Maison", p: "9,90€", d: "Boulettes de blé farcies à la viande hachée (x3).", r: "94% (19)" },
+                { n: "Ezme Teket", p: "6,50€", d: "Hachis de tomates, poivrons, persil, huile d'olive.", r: "94% (19)" },
+                { n: "Sigara Böregi Maison", p: "6,90€", d: "Feuilletés cigare croustillants au fromage.", r: "85% (20)" },
+                { n: "Houmous Maison", p: "6,90€", d: "Purée de pois chiches maison à la tahini.", r: "84% (26)" },
+                { n: "Caciki Maison", p: "6,90€", d: "Yaourt frais au concombre, ail et aneth.", r: "88% (9)" },
+                { n: "Purée d'Aubergine", p: "6,90€", d: "Aubergines et poivrons marinés aux épices du chef.", r: "100% (5)" },
+                { n: "Soupe de Lentilles", p: "7,00€", d: "Soupe traditionnelle turque aux lentilles corail.", r: "67% (46)" }
+            ],
+            assiettes: [
+                { n: "Grillade Mixte Royale", p: "24,90€", d: "Kebab, Adana, Köfte, Poulet, Agneau, piment et tomate grillée.", r: "83% (271)" },
+                { n: "Tek'Et Mixte (2 pers)", p: "54,90€", d: "Plateau royal pour deux personnes avec tous nos assortiments.", r: "76% (30)" },
+                { n: "Iskender Kebab", p: "19,90€", d: "Pain grillé, yaourt, beurre, sauce tomate et veau maison.", r: "67% (62)" },
+                { n: "Assiette Kebab Maison", p: "17,90€", d: "Veau maison servi avec riz/blé, frites maison et salade.", r: "91% (58)" },
+                { n: "Beyti Sarma Signature", p: "19,90€", d: "Brochette viande hachée, mozzarella, roulée en galette.", s: true },
+                { n: "Assiette Côtelettes d'Agneau", p: "19,90€", d: "Pièces d'agneau grillées au feu de bois.", r: "88% (34)" },
+                { n: "Aubergine Kebab (Patlican)", p: "18,90€", d: "Aubergines et viande hachée grillées en brochette." },
+                { n: "Entrecôte Grillée", p: "29,90€", d: "Pièce de boeuf tendre, sauce poivre maison et frites." },
+                { n: "Pavé de Saumon", p: "22,90€", d: "Saumon grillé avec riz ou blé et crudités.", r: "80% (5)" },
+                { n: "Hamburger Tek'Et", p: "13,90€", d: "Steak maison, bacon halal, double cheddar, sauce cheezy BBQ.", r: "93% (15)" }
+            ],
+            salades: [
+                { n: "Salade Chef Tek'Et", p: "14,50€", d: "Poulet mariné, feta, raisins secs, crudités fraîches.", s: true },
+                { n: "Salade César", p: "13,90€", d: "Poulet mariné, parmesan, pain grillé, sauce césar maison.", r: "76% (17)" },
+                { n: "Salade Bergère", p: "8,90€", d: "Tomate, salade, concombre, olive, fromage feta, oignon rouge, persil, huile d’olive.", r: "100% (4)" }
+            ],
+            pides: [
+                { n: "LAHMACUN (Pizza Turque)", p: "5,50€", d: "Viande hachée (boeuf), legumes & salade.", r: "87% (72)" },
+                { n: "Pide Mixte Tek'Et", p: "14,90€", d: "Salami turc, kebab veau, saucisson, agneau, viande hachée et fromage.", r: "82% (29)" },
+                { n: "Pide Sucuklu", p: "13,90€", d: "Mozzarella & saucisson turc (sucuk).", r: "93% (33)" },
+                { n: "Pide Fromage", p: "11,90€", d: "Au fromage fondant & fromage turc.", r: "83% (12)" },
+                { n: "Pide Chef Tek'et", p: "14,90€", d: "Kebab veau maison, maïs, poivrons, mozzarella.", s: true }
+            ],
+            extras: [
+                { n: "Barquette Kebab", p: "9,50€", d: "Kebab de veau fait maison.", r: "86% (44)" },
+                { n: "Frites Maison", p: "5,00€", d: "Pommes de terre fraîches taillées en bâtonnets.", r: "80% (31)" },
+                { n: "4 Tenders Poulet", p: "5,50€", d: "Tenders de poulet croustillants.", r: "90% (10)" },
+                { n: "6 Nuggets", p: "4,50€", d: "Nuggets de poulet.", r: "85% (21)" }
+            ],
+            desserts: [
+                { n: "Kunefe Maison", p: "9,50€", d: "Cheveux d'ange, fromage, pistache et sirop maison.", r: "76% (131)" },
+                { n: "Baklava Maison Tek'et", p: "7,90€", d: "3 pièces artisanales au miel et pistaches.", r: "91% (57)" },
+                { n: "Tiramisu Maison", p: "4,50€", d: "Oreo, Caramel ou Nutella au choix.", r: "79% (29)" },
+                { n: "Trilice au Caramel", p: "7,90€", d: "Gâteau traditionnel turc aux trois laits.", r: "75% (4)" }
+            ],
+            boissons: [
+                { n: "Coca-Cola / Zero / Cherry", p: "2,30€", d: "33 cl.", r: "94% (143)" },
+                { n: "Ayran Maison", p: "2,30€", d: "Yaourt à boire traditionnel turc.", r: "88% (35)" },
+                { n: "Oasis / Ice Tea / Fanta", p: "2,30€", d: "33 cl." },
+                { n: "Red-Bull", p: "3,00€", d: "25 cl." }
+            ]
+        }; // <-- Closure of the menuData object fix
+
+function updateOpeningStatus() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const currentTime = hours + (minutes / 60);
+            
+            // Plage horaire : 11h30 (11.5) à 23h30 (23.5)
+            const openTime = 11.5;
+            const closeTime = 23.5;
+            
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            const statusContainer = document.getElementById('status-container');
+            
+            if (!statusText || !statusDot || !statusContainer) return;
+
+            if (currentTime >= openTime && currentTime < closeTime) {
+                // ÉTAT : OUVERT
+                statusText.innerText = "Actuellement Ouvert";
+                statusText.classList.remove('text-gray-400', 'text-red-500');
+                statusText.classList.add('text-green-500');
+                
+                statusDot.classList.remove('bg-gray-500', 'bg-red-500');
+                statusDot.classList.add('bg-green-500', 'animate-pulse');
+                
+                statusContainer.classList.remove('border-white/10', 'border-red-500/20');
+                statusContainer.classList.add('border-green-500/30', 'bg-green-500/5');
+            } else {
+                // ÉTAT : FERMÉ
+                statusText.innerText = "Actuellement Fermé";
+                statusText.classList.remove('text-gray-400', 'text-green-500');
+                statusText.classList.add('text-gray-500');
+                
+                statusDot.classList.remove('bg-green-500', 'animate-pulse');
+                statusDot.classList.add('bg-red-500/50');
+                
+                statusContainer.classList.remove('border-green-500/30', 'bg-green-500/5');
+                statusContainer.classList.add('border-white/10');
+            }
+        }
+
+        // Utilisation de DOMContentLoaded pour une exécution plus rapide que window.load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation des autres composants
+            if (typeof initLucide === 'function') initLucide();
+            if (typeof initGSAPAnimations === 'function') initGSAPAnimations();
+            
+            // Mise à jour immédiate du statut
+            updateOpeningStatus();
+            
+            // Vérification automatique chaque minute
+            setInterval(updateOpeningStatus, 60000);
+        });
+
+        function openOrderModal() {
+            const modal = document.getElementById('orderModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Sélection plus précise pour éviter les conflits d'opacité
+            gsap.from("#orderModal .modal-content > div:not(.oriental-bg)", {
+                opacity: 0,
+                y: 20,
+                duration: 0.6,
+                stagger: 0.15,
+                ease: "power3.out",
+                clearProps: "all" // Nettoie les propriétés après l'anim pour éviter les bugs d'affichage
+            });
+        }
+
+        function closeOrderModal() {
+            const modal = document.getElementById('orderModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeOrderModal();
+        });
+
+        // Close on click outside
+        document.getElementById('orderModal').addEventListener('click', (e) => {
+            if (e.target.id === 'orderModal') closeOrderModal();
+        });
+
+        function filterMenu(category) {
+            const container = document.getElementById('menu-container');
+            const tabs = document.querySelectorAll('.menu-tab');
+            
+            tabs.forEach(tab => {
+                tab.classList.remove('tab-active');
+                if(tab.getAttribute('onclick').includes(`'${category}'`)) tab.classList.add('tab-active');
+            });
+
+            gsap.to(container, { opacity: 0, y: 15, duration: 0.25, ease: "power2.in", onComplete: () => {
+                container.innerHTML = menuData[category].map(item => `
+                    <div class="flex flex-col py-6 border-b border-white/5 group hover:bg-red-900/[0.03] transition-all px-4 rounded-2xl relative">
+                        ${item.s ? '<div class="absolute top-2 right-4 text-[7px] bg-red-700 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Populaire</div>' : ''}
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="text-[11px] font-bold uppercase tracking-widest group-hover:text-red-600 transition-colors flex items-center gap-2">
+                                    ${item.n}
+                                </h4>
+                                <p class="text-gray-500 text-[11px] mt-2 font-light leading-relaxed">${item.d}</p>
+                                ${item.r ? `<div class="mt-2 text-[9px] text-red-900/60 font-bold tracking-tighter uppercase italic">${item.r} satisfaction</div>` : ''}
+                            </div>
+                            <div class="text-white font-bold text-sm tracking-tighter ml-4 py-1 px-3 border border-white/10 rounded-lg bg-white/5">${item.p}</div>
+                        </div>
+                    </div>
+                `).join('');
+                gsap.to(container, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.04 });
+            }});
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            filterMenu('sandwichs');
+            gsap.registerPlugin(ScrollTrigger);
+
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('navbar');
+                if (window.scrollY > 100) {
+                    nav.classList.add('glass-nav', 'py-2');
+                    nav.classList.remove('py-4');
+                } else {
+                    nav.classList.remove('glass-nav', 'py-2');
+                    nav.classList.add('py-4');
+                }
+            });
+
+            gsap.to(".hero-fade", { opacity: 1, y: 0, duration: 1.2, stagger: 0.2, ease: "power4.out" });
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                gsap.from(el, {
+                    scrollTrigger: { trigger: el, start: "top 90%" },
+                    opacity: 0,
+                    y: 30,
+                    duration: 1.2,
+                    ease: "power3.out"
+                });
+            });
+        });
+    </script>
+</body>
+</html>
